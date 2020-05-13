@@ -6,17 +6,17 @@ import { House1 } from "../components/entities/House1";
 import { House2 } from "../components/entities/House2";
 import { Windmill } from "../components/entities/Windmill";
 import { ForestSpawner } from "../components/ForestSpawner";
-import { Woodcutter } from "../components/jobs/Woodcutter";
 import { Player } from "../components/Player";
 import { Tree } from "../components/Tree";
 import { HomeFinder } from "../logic/HomeFinder";
+import { JobFinder } from "../logic/JobFinder";
 import { Entity, EntityClass } from "../utils/Entity";
 import { IBuildCosts } from "../utils/IBuildCosts";
 import { IPoint } from "../utils/IPoint";
 import { MaiSceneHud } from "./MainSceneHud";
 
-const START_CITIZEN_COUNT = 3;
-const START_TREE_COUNT = 3;
+const START_CITIZEN_COUNT = 1;
+const START_TREE_COUNT = 800;
 
 export class MainScene extends Scene {
     public buildingTypes: EntityClass[] = [House1, House2, Field, Windmill];
@@ -26,6 +26,7 @@ export class MainScene extends Scene {
     private cits: Citizen[] = [];
     private trees: Tree[] = [];
     private homeFinder!: HomeFinder;
+    private jobFinder!: JobFinder;
 
     constructor() {
         super({ key: "MainScene" });
@@ -42,20 +43,22 @@ export class MainScene extends Scene {
         this.trees = forest.spawn(START_TREE_COUNT);
         this.cits = Array(START_CITIZEN_COUNT)
             .fill(0)
-            .map(_ => {
-                const cit = new Citizen(this, 10, 10);
-                const job = new Woodcutter(cit, this.player, () => this.trees);
-                cit.setJob(job);
-                return cit;
-            });
+            .map(_ => new Citizen(this, 10, 10));
+        const getCits = () => this.cits;
         this.homeFinder = new HomeFinder(
             () => this.buildings.filter(isHouse),
-            () => this.cits
+            getCits
         );
+        this.jobFinder = new JobFinder(this.player, getCits, () => this.trees);
     }
 
     public update() {
         this.homeFinder.assignFreeHomes();
+        this.jobFinder.assignJobsToUnemployed();
+    }
+
+    public addCits(newCits: Citizen[]) {
+        this.cits.push(...newCits);
     }
 
     private placeBuilding({ x, y }: Input.Pointer) {

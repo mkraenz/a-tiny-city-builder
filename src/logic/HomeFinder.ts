@@ -19,12 +19,3 @@ export class HomeFinder {
         return this.homes().filter(h => !h.citizen);
     }
 }
-
-//         const freeHouseX = this.buildings
-//             .filter(b => b instanceof House1 || b instanceof House2)
-//             .filter(b => !(b as House).citizen)[0];
-//         const freeHouse = freeHouseX as House | undefined;
-//         if (freeHouse) {
-//             cit.home = freeHouse;
-//             freeHouse.citizen = cit;
-//         }

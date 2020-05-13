@@ -3,7 +3,7 @@ import { keysIn } from "../utils/ts";
 
 export class Player implements IStore {
     public food = 12;
-    public stone = 5;
+    public stone = 90;
     public wood = 20;
     public crops = 20;
 

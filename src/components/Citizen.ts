@@ -1,7 +1,6 @@
 import { Physics, Scene } from "phaser";
+import { House } from "../utils/Entity";
 import { Sprite } from "../utils/Sprite";
-import { House1 } from "./entities/House1";
-import { House2 } from "./entities/House2";
 import { Hobo } from "./jobs/Hobo";
 import { IJob } from "./jobs/IJob";
 
@@ -11,7 +10,7 @@ const SPEED = 200; // px per frame
 export class Citizen extends Physics.Arcade.Sprite {
     public idle = true;
     public target?: Sprite; // move towards this target if defined
-    public home?: House1 | House2;
+    public home?: House;
     public job: IJob = new Hobo();
 
     constructor(scene: Scene, x: number, y: number) {
