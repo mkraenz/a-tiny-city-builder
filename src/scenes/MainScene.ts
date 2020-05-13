@@ -1,63 +1,75 @@
+import { random } from "lodash";
 import { Input, Physics, Scene } from "phaser";
 import { BackgroundImage } from "../components/BackgroundImage";
-import { DebugMouse } from "../components/DebugMouse";
+import { Citizen } from "../components/Citizen";
 import { Field } from "../components/entities/Field";
 import { House1 } from "../components/entities/House1";
 import { House2 } from "../components/entities/House2";
 import { Windmill } from "../components/entities/Windmill";
-import { Board } from "../components/gui/Board";
-import { PostItWithImage } from "../components/gui/PostItWithImage";
-import { Color } from "../styles/Color";
+import { ForestSpawner } from "../components/ForestSpawner";
+import { Player } from "../components/Player";
+import { Tree } from "../components/Tree";
 import { EntityClass } from "../utils/Entity";
+import { IBuildCosts } from "../utils/IBuildCosts";
 import { IPoint } from "../utils/IPoint";
+import { MaiSceneHud } from "./MainSceneHud";
 
 export class MainScene extends Scene {
     public buildingTypes: EntityClass[] = [House1, House2, Field, Windmill];
+    public placedBuilding: EntityClass = this.buildingTypes[0];
     private buildings: Array<Physics.Arcade.Sprite | Physics.Arcade.Image> = [];
-    private placedBuilding: EntityClass = this.buildingTypes[0];
+    private player: Player;
+    private cid: Citizen;
+    private trees: Tree[] = [];
 
     constructor() {
         super({ key: "MainScene" });
     }
 
     public create(): void {
-        this.cameras.add(0, 0).setBackgroundColor(Color.Peach);
-
         const bg = new BackgroundImage(this, "peach-bg");
         bg.on("pointerup", pointer => this.placeBuilding(pointer));
-        new DebugMouse(this);
-        this.addGui();
+        this.player = new Player();
+        new MaiSceneHud(this, this.player);
+        const forest = new ForestSpawner(this);
+        this.trees = forest.spawn(2);
+        this.cid = new Citizen(
+            this,
+            10,
+            10,
+            "woodcutter",
+            this.player,
+            this.trees[0]
+        );
     }
 
-    private addGui() {
-        const board = new Board(this, 20, this.scale.height - 100);
-        const xOffset = 60;
-        this.buildingTypes.forEach(
-            (Type, i) =>
-                new PostItWithImage(
-                    this,
-                    { x: board.x + xOffset * i + 20, y: board.y + 8 },
-                    {
-                        component: {
-                            texture: Type.texture,
-                            scale: 1.8,
-                        },
-                        onPointerup: () => (this.placedBuilding = Type),
-                    }
-                )
-        );
+    public update() {
+        this.trees = this.trees.filter(t => t.active);
+        if (!this.cid.target) {
+            this.cid.target = this.trees[random(this.trees.length - 1)];
+        }
+        if (!this.cid.home) {
+            this.cid.home = this.buildings.filter(
+                b => b instanceof House1 || b instanceof House2
+            )[0];
+        }
     }
 
     private placeBuilding({ x, y }: Input.Pointer) {
         const Building = this.placedBuilding;
-        if (this.canBuild(x, y, Building)) {
+        if (this.canBuildAt(x, y, Building) && this.canPayFor(Building)) {
             const house = new Building(this, { x, y });
             this.buildings.push(house);
+            this.player.pay(Building.buildCosts);
         }
     }
 
+    private canPayFor({ buildCosts }: { buildCosts: IBuildCosts }) {
+        return this.player.hasResources(buildCosts);
+    }
+
     /** assumes that buildings are placed with origin 0.5, 0.5 */
-    private canBuild(
+    private canBuildAt(
         x: number,
         y: number,
         building: { width: number; height: number }
@@ -69,6 +81,7 @@ export class MainScene extends Scene {
         const bottomRight = { x: x + halfWidth, y: y + halfHeight };
         const bottomLeft = { x: x - halfWidth, y: y + halfHeight };
         return !this.buildings.some(({ body }) => {
+            // TODO not working for windmill and house2
             const hit = (point: IPoint) => body.hitTest(point.x, point.y);
             return (
                 hit(topLeft) ||

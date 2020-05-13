@@ -1,7 +1,7 @@
 import { GameObjects, Scene } from "phaser";
 import { Color, toHex } from "../styles/Color";
 import { setDefaultTextStyle } from "../styles/Text";
-import { MainScene } from "./mainScene";
+import { MainScene } from "./MainScene";
 
 export class LoadingScene extends Scene {
     private halfWidth!: number;
@@ -92,6 +92,18 @@ export class LoadingScene extends Scene {
         this.load.image("peach-bg", "./assets/images/peach-bg.png");
         this.load.image("field", "./assets/images/field.png");
         this.load.image("windmill", "./assets/images/windmill.png");
+        this.load.image("wood", "./assets/images/wood.png");
+        this.load.image("stone", "./assets/images/stone.png");
+        this.load.image("food", "./assets/images/food.png");
+        this.load.image("crops", "./assets/images/crops.png");
+        this.load.image("citizen", "./assets/images/citizen.png");
+        this.load.spritesheet("tree", "./assets/images/tree-5-pics.png", {
+            frameWidth: 16,
+        });
+        this.load.image(
+            "postit-two-pins",
+            "./assets/images/postit-two-pins.png"
+        );
         // this.load.audio("background", "./assets/sounds/bgm.mp3");
     }
 

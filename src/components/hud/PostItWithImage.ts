@@ -1,6 +1,6 @@
 import { GameObjects, Scene } from "phaser";
 import { GUI_DEPTH } from "../../styles/constants";
-import { atCenter } from "../../utils/atCenter";
+import { atCenter } from "../../utils/get-coords";
 import { IPoint } from "../../utils/IPoint";
 import { PostIt } from "./PostIt";
 
