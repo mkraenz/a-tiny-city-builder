@@ -4,3 +4,7 @@ export interface IResources {
     wood: number;
     crops: number;
 }
+
+export interface IStore {
+    addResources: (res: Partial<IResources>) => void;
+}

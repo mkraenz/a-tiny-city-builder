@@ -8,7 +8,7 @@ export class Tree extends Physics.Arcade.Sprite {
     public static width = 24;
     public static height = 32;
     public static readonly texture = "tree";
-    public beingWorkedOn = false;
+    public isTaken = false;
 
     constructor(scene: Scene, at: IPoint) {
         super(scene, at.x, at.y, Tree.texture);

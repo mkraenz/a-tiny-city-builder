@@ -2,25 +2,19 @@ import { Physics, Scene } from "phaser";
 import { Sprite } from "../utils/Sprite";
 import { House1 } from "./entities/House1";
 import { House2 } from "./entities/House2";
-import { Player } from "./Player";
+import { Hobo } from "./jobs/Hobo";
+import { IJob } from "./jobs/IJob";
 
 const MIN_DISTANCE_TO_TARGET = 5;
 const SPEED = 200; // px per frame
 
-type Job = "woodcutter" | "farmer" | "miner";
-
 export class Citizen extends Physics.Arcade.Sprite {
-    private idle = true;
+    public idle = true;
+    public target?: Sprite; // move towards this target if defined
+    public home?: House1 | House2;
+    public job: IJob = new Hobo();
 
-    constructor(
-        scene: Scene,
-        x: number,
-        y: number,
-        public job: Job,
-        private player: Player,
-        public target?: Sprite,
-        public home?: House1 | House2
-    ) {
+    constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y, "citizen");
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -44,12 +38,41 @@ export class Citizen extends Physics.Arcade.Sprite {
         this.setVelocity(direction.x, direction.y);
     }
 
+    public setJob(job: IJob) {
+        this.job = job;
+    }
+
+    public setIdle(val: boolean) {
+        this.idle = val;
+    }
+
     public preUpdate() {
+        this.job.update();
         if (!this.target) {
-            if (this.home) {
-                this.move(this.home);
-            }
+            this.maybeGoHome();
             return;
+        }
+        if (this.isCloseToTarget()) {
+            this.setVelocity(0);
+        } else {
+            this.move(this.target);
+        }
+    }
+
+    public maybeGoHome() {
+        this.idle = true;
+        if (this.home) {
+            this.target = this.home;
+        }
+    }
+
+    public setTarget(target: Sprite | undefined) {
+        this.target = target;
+    }
+
+    public isCloseToTarget() {
+        if (!this.target) {
+            return false;
         }
         const dist = Phaser.Math.Distance.Between(
             this.x,
@@ -57,33 +80,6 @@ export class Citizen extends Physics.Arcade.Sprite {
             this.target.x,
             this.target.y
         );
-
-        if (dist > MIN_DISTANCE_TO_TARGET) {
-            this.move(this.target);
-        } else {
-            this.setVelocity(0);
-            if (this.job === "woodcutter" && this.idle) {
-                this.cutTree();
-            }
-        }
-    }
-
-    private cutTree() {
-        this.idle = false;
-        setTimeout(() => {
-            if (!this.target) {
-                throw new Error(
-                    `citizen target not set. This should not have happened. Citizen: ${JSON.stringify(
-                        this,
-                        null,
-                        2
-                    )}`
-                );
-            }
-            this.player.addResources({ wood: 5 });
-            this.target.destroy();
-            this.idle = true;
-            this.target = undefined;
-        }, 2000);
+        return dist < MIN_DISTANCE_TO_TARGET;
     }
 }

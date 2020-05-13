@@ -1,7 +1,7 @@
-import { IResources } from "../utils/IResources";
+import { IResources, IStore } from "../utils/IResources";
 import { keysIn } from "../utils/ts";
 
-export class Player {
+export class Player implements IStore {
     public food = 12;
     public stone = 5;
     public wood = 20;
