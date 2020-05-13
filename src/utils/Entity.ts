@@ -9,3 +9,5 @@ export type EntityClass =
     | typeof House2
     | typeof Field
     | typeof Windmill;
+
+export type House = House1 | House2;

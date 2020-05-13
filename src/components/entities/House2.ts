@@ -10,6 +10,7 @@ export class House2 extends Physics.Arcade.Image {
         stone: 2,
         wood: 4,
     };
+    public citizen?: {};
 
     constructor(scene: Scene, at: IPoint) {
         super(scene, at.x, at.y, House2.texture);

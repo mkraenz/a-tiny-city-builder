@@ -71,10 +71,19 @@ export class Citizen extends Physics.Arcade.Sprite {
     private cutTree() {
         this.idle = false;
         setTimeout(() => {
+            if (!this.target) {
+                throw new Error(
+                    `citizen target not set. This should not have happened. Citizen: ${JSON.stringify(
+                        this,
+                        null,
+                        2
+                    )}`
+                );
+            }
             this.player.addResources({ wood: 5 });
             this.target.destroy();
             this.idle = true;
-            this.target = null;
+            this.target = undefined;
         }, 2000);
     }
 }
