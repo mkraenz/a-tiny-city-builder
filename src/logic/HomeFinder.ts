@@ -7,7 +7,7 @@ export class HomeFinder {
     public assignFreeHomes() {
         const homeless = this.cits().filter(c => !c.home);
         homeless.forEach(cit => {
-            const freeHome = this.getFreeHomes()[0];
+            const freeHome = this.findFreeHouse();
             if (freeHome) {
                 cit.home = freeHome;
                 freeHome.citizen = cit;
@@ -15,7 +15,7 @@ export class HomeFinder {
         });
     }
 
-    private getFreeHomes() {
-        return this.homes().filter(h => !h.citizen);
+    private findFreeHouse() {
+        return this.homes().find(h => !h.citizen);
     }
 }

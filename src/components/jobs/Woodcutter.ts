@@ -1,6 +1,7 @@
 import { IStore } from "../../utils/IResources";
 import { Citizen } from "../Citizen";
 import { Tree } from "../Tree";
+import { Hobo } from "./Hobo";
 import { IJob } from "./IJob";
 
 const WOOD_PER_TREE = 1;
@@ -49,6 +50,7 @@ export class Woodcutter implements IJob {
             this.citizen.setIdle(false);
         } else {
             this.citizen.setIdle(true);
+            this.citizen.setJob(new Hobo());
         }
     }
 

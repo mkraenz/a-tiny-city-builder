@@ -5,12 +5,12 @@ import { Field } from "../components/entities/Field";
 import { House1 } from "../components/entities/House1";
 import { House2 } from "../components/entities/House2";
 import { Windmill } from "../components/entities/Windmill";
-import { ForestSpawner } from "../components/ForestSpawner";
 import { Player } from "../components/Player";
 import { Tree } from "../components/Tree";
+import { TreeSpawner } from "../components/TreeSpawner";
 import { HomeFinder } from "../logic/HomeFinder";
 import { JobFinder } from "../logic/JobFinder";
-import { Entity, EntityClass } from "../utils/Entity";
+import { Entity, EntityClass, House } from "../utils/Entity";
 import { IBuildCosts } from "../utils/IBuildCosts";
 import { IPoint } from "../utils/IPoint";
 import { MaiSceneHud } from "./MainSceneHud";
@@ -40,8 +40,8 @@ export class MainScene extends Scene {
         );
         this.player = new Player();
         new MaiSceneHud(this, this.player);
-        const forest = new ForestSpawner(this, this.trees);
-        forest.spawn(START_TREE_COUNT);
+        const forest = new TreeSpawner(this, this.trees);
+        forest.spawn(5);
         forest.spawnRegularly(NEW_TREES_PER_SEC);
 
         this.cits = Array(START_CITIZEN_COUNT)
@@ -52,7 +52,12 @@ export class MainScene extends Scene {
             () => this.buildings.filter(isHouse),
             getCits
         );
-        this.jobFinder = new JobFinder(this.player, getCits, () => this.trees);
+        this.jobFinder = new JobFinder(
+            this.player,
+            getCits,
+            () => this.trees,
+            () => this.buildings.filter(isField)
+        );
     }
 
     public update() {
@@ -102,4 +107,6 @@ export class MainScene extends Scene {
     }
 }
 
-const isHouse = (b: Entity) => b instanceof House1 || b instanceof House2;
+const isHouse = (b: Entity): b is House =>
+    b instanceof House1 || b instanceof House2;
+const isField = (b: Entity): b is Field => b instanceof Field;

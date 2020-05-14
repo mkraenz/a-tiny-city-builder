@@ -10,6 +10,7 @@ export class Field extends Physics.Arcade.Image {
         stone: 0,
         wood: 2,
     };
+    public isTaken = false;
 
     constructor(scene: Scene, at: IPoint) {
         super(scene, at.x, at.y, Field.texture);

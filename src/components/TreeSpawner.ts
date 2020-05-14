@@ -1,7 +1,7 @@
 import { Scene } from "phaser";
 import { Tree } from "./Tree";
 
-export class ForestSpawner {
+export class TreeSpawner {
     constructor(private scene: Scene, private trees: Tree[]) {}
 
     public spawn(n: number) {
