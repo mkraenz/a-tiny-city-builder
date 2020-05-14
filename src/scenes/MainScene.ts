@@ -56,7 +56,8 @@ export class MainScene extends Scene {
             this.player,
             getCits,
             () => this.trees,
-            () => this.buildings.filter(isField)
+            () => this.buildings.filter(isField),
+            () => this.buildings.filter(isWindmill)
         );
     }
 
@@ -110,3 +111,4 @@ export class MainScene extends Scene {
 const isHouse = (b: Entity): b is House =>
     b instanceof House1 || b instanceof House2;
 const isField = (b: Entity): b is Field => b instanceof Field;
+const isWindmill = (b: Entity): b is Windmill => b instanceof Windmill;

@@ -1,19 +1,18 @@
 import { IStore } from "../../utils/IResources";
 import { Citizen } from "../Citizen";
-import { Tree } from "../Tree";
-import { Hobo } from "./Hobo";
+import { Windmill } from "../entities/Windmill";
 import { IJob } from "./IJob";
 
-const WOOD_PER_TREE = 1;
-const TIME_TO_CUT_TREE_IN_MS = 3000;
+const FOOD_PER_TICK = 1;
+const TICK_TIME_IN_MS = 5000;
 
-export class Woodcutter implements IJob {
+export class Miller implements IJob {
     private tickStarted = false;
 
     constructor(
         private citizen: Citizen,
         private store: IStore,
-        private getTrees: () => Tree[]
+        private windmill: () => Windmill
     ) {}
 
     public update() {
@@ -25,42 +24,31 @@ export class Woodcutter implements IJob {
             this.citizen.isCloseToTarget() &&
             !this.tickStarted
         ) {
-            this.startCuttingTree();
+            this.startMilling();
         }
     }
 
     private getNextTarget() {
-        const freeTrees = this.getTrees().filter(t => !t.isTaken);
-        if (!freeTrees.length) {
-            return undefined;
-        }
-        const nearestTree = freeTrees.reduce(
-            (min, val) =>
-                this.citizen.dist(val) > this.citizen.dist(min) ? min : val,
-            freeTrees[0]
-        );
-        return nearestTree;
+        return this.windmill() || undefined;
     }
 
     private startWork() {
-        const tree = this.getNextTarget();
-        if (tree) {
-            this.citizen.setTarget(tree);
-            tree.isTaken = true;
+        const target = this.getNextTarget();
+        if (target) {
+            this.citizen.setTarget(target);
             this.citizen.setIdle(false);
         } else {
             this.citizen.setIdle(true);
-            this.citizen.setJob(new Hobo());
         }
     }
 
-    private startCuttingTree() {
+    private startMilling() {
         this.citizen.setIdle(false);
         this.tickStarted = true;
-        setTimeout(() => this.handleTreeCut(), TIME_TO_CUT_TREE_IN_MS);
+        setTimeout(() => this.onTickFinished(), TICK_TIME_IN_MS);
     }
 
-    private handleTreeCut() {
+    private onTickFinished() {
         if (!this.citizen.target) {
             throw new Error(
                 `Citizen.target not set. This should not have happened. Should have been a Tree. Citizen: ${JSON.stringify(
@@ -70,8 +58,7 @@ export class Woodcutter implements IJob {
                 )}`
             );
         }
-        this.store.addResources({ wood: WOOD_PER_TREE });
-        this.citizen.target.destroy();
+        this.store.addResources({ food: FOOD_PER_TICK });
         this.citizen.setIdle(true);
         this.citizen.setTarget(undefined);
         this.tickStarted = false;

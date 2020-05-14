@@ -7,7 +7,7 @@ const CROPS_PER_TICK = 1;
 const TIME_TO_FARM = 5000;
 
 export class Farmer implements IJob {
-    private isFarming = false;
+    private tickStarted = false;
 
     constructor(
         private citizen: Citizen,
@@ -22,7 +22,7 @@ export class Farmer implements IJob {
         if (
             !this.citizen.idle &&
             this.citizen.isCloseToTarget() &&
-            !this.isFarming
+            !this.tickStarted
         ) {
             this.startFarming();
         }
@@ -44,11 +44,11 @@ export class Farmer implements IJob {
 
     private startFarming() {
         this.citizen.setIdle(false);
-        this.isFarming = true;
-        setTimeout(() => this.onFarmingFinished(), TIME_TO_FARM);
+        this.tickStarted = true;
+        setTimeout(() => this.onTickFinished(), TIME_TO_FARM);
     }
 
-    private onFarmingFinished() {
+    private onTickFinished() {
         if (!this.citizen.target) {
             throw new Error(
                 `Citizen.target not set. This should not have happened. Should have been a Tree. Citizen: ${JSON.stringify(
@@ -61,6 +61,6 @@ export class Farmer implements IJob {
         this.store.addResources({ crops: CROPS_PER_TICK });
         this.citizen.setIdle(true);
         this.citizen.setTarget(undefined);
-        this.isFarming = false;
+        this.tickStarted = false;
     }
 }

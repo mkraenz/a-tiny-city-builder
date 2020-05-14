@@ -10,6 +10,7 @@ export class Windmill extends Physics.Arcade.Image {
         stone: 2,
         wood: 4,
     };
+    public isTaken = false;
 
     constructor(scene: Scene, at: IPoint) {
         super(scene, at.x, at.y, Windmill.texture);
