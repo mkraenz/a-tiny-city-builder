@@ -3,6 +3,9 @@ import { Citizen } from "../Citizen";
 import { Tree } from "../Tree";
 import { IJob } from "./IJob";
 
+const WOOD_PER_TREE = 1;
+const TIME_TO_CUT_TREE_IN_MS = 3000;
+
 export class Woodcutter implements IJob {
     private isCuttingTree = false;
 
@@ -21,7 +24,7 @@ export class Woodcutter implements IJob {
             this.citizen.isCloseToTarget() &&
             !this.isCuttingTree
         ) {
-            this.cutTree();
+            this.startCuttingTree();
         }
     }
 
@@ -49,24 +52,26 @@ export class Woodcutter implements IJob {
         }
     }
 
-    private cutTree() {
+    private startCuttingTree() {
         this.citizen.setIdle(false);
         this.isCuttingTree = true;
-        setTimeout(() => {
-            if (!this.citizen.target) {
-                throw new Error(
-                    `Citizen.target not set. This should not have happened. Should have been a Tree. Citizen: ${JSON.stringify(
-                        this,
-                        null,
-                        2
-                    )}`
-                );
-            }
-            this.store.addResources({ wood: 5 });
-            this.citizen.target.destroy();
-            this.citizen.setIdle(true);
-            this.citizen.setTarget(undefined);
-            this.isCuttingTree = false;
-        }, 2000);
+        setTimeout(() => this.handleTreeCut(), TIME_TO_CUT_TREE_IN_MS);
+    }
+
+    private handleTreeCut() {
+        if (!this.citizen.target) {
+            throw new Error(
+                `Citizen.target not set. This should not have happened. Should have been a Tree. Citizen: ${JSON.stringify(
+                    this,
+                    null,
+                    2
+                )}`
+            );
+        }
+        this.store.addResources({ wood: WOOD_PER_TREE });
+        this.citizen.target.destroy();
+        this.citizen.setIdle(true);
+        this.citizen.setTarget(undefined);
+        this.isCuttingTree = false;
     }
 }

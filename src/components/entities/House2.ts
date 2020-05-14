@@ -11,8 +11,8 @@ export class House2 extends Physics.Arcade.Image {
     public static height = 32;
     public static readonly texture = "house2";
     public static buildCosts: IBuildCosts = {
-        stone: 2,
-        wood: 4,
+        stone: 1,
+        wood: 10,
     };
     public citizen?: {};
 
