@@ -1,4 +1,3 @@
-import { randomEle } from "../../utils/array-utils";
 import { IStore } from "../../utils/IResources";
 import { Citizen } from "../Citizen";
 import { Tree } from "../Tree";
@@ -13,10 +12,6 @@ export class Woodcutter implements IJob {
         private getTrees: () => Tree[]
     ) {}
 
-    public getNextTarget() {
-        return randomEle(this.getTrees().filter(t => !t.isTaken));
-    }
-
     public update() {
         if (this.citizen.idle) {
             this.startWork();
@@ -28,6 +23,19 @@ export class Woodcutter implements IJob {
         ) {
             this.cutTree();
         }
+    }
+
+    private getNextTarget() {
+        const freeTrees = this.getTrees().filter(t => !t.isTaken);
+        if (!freeTrees.length) {
+            return undefined;
+        }
+        const nearestTree = freeTrees.reduce(
+            (min, val) =>
+                this.citizen.dist(val) > this.citizen.dist(min) ? min : val,
+            freeTrees[0]
+        );
+        return nearestTree;
     }
 
     private startWork() {

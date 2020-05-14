@@ -1,5 +1,6 @@
 import { Physics, Scene } from "phaser";
 import { House } from "../utils/Entity";
+import { IPoint } from "../utils/IPoint";
 import { Sprite } from "../utils/Sprite";
 import { Hobo } from "./jobs/Hobo";
 import { IJob } from "./jobs/IJob";
@@ -73,12 +74,11 @@ export class Citizen extends Physics.Arcade.Sprite {
         if (!this.target) {
             return false;
         }
-        const dist = Phaser.Math.Distance.Between(
-            this.x,
-            this.y,
-            this.target.x,
-            this.target.y
-        );
+        const dist = this.dist(this.target);
         return dist < MIN_DISTANCE_TO_TARGET;
+    }
+
+    public dist(other: IPoint) {
+        return Phaser.Math.Distance.Between(this.x, this.y, other.x, other.y);
     }
 }

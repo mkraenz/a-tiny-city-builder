@@ -17,6 +17,7 @@ import { MaiSceneHud } from "./MainSceneHud";
 
 const START_CITIZEN_COUNT = 1;
 const START_TREE_COUNT = 800;
+const NEW_TREES_PER_SEC = 2;
 
 export class MainScene extends Scene {
     public buildingTypes: EntityClass[] = [House1, House2, Field, Windmill];
@@ -39,8 +40,10 @@ export class MainScene extends Scene {
         );
         this.player = new Player();
         new MaiSceneHud(this, this.player);
-        const forest = new ForestSpawner(this);
-        this.trees = forest.spawn(START_TREE_COUNT);
+        const forest = new ForestSpawner(this, this.trees);
+        forest.spawn(START_TREE_COUNT);
+        forest.spawnRegularly(NEW_TREES_PER_SEC);
+
         this.cits = Array(START_CITIZEN_COUNT)
             .fill(0)
             .map(_ => new Citizen(this, 10, 10));

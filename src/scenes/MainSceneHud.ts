@@ -1,5 +1,4 @@
 import { Scene } from "phaser";
-import { DebugMouse } from "../components/DebugMouse";
 import { Field } from "../components/entities/Field";
 import { House1 } from "../components/entities/House1";
 import { House2 } from "../components/entities/House2";
@@ -25,7 +24,6 @@ export class MaiSceneHud {
         private scene: Scene & { placedBuilding: EntityClass },
         private player: Player
     ) {
-        new DebugMouse(this.scene);
         this.addGui();
     }
 
