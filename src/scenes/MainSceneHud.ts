@@ -9,6 +9,7 @@ import { WrittenPostit } from "../components/hud/WrittenPostit";
 import { Player } from "../components/Player";
 import { EntityClass } from "../utils/Entity";
 import { atTopLeft } from "../utils/get-coords";
+import { IJobCounts } from "../utils/IJobCounts";
 import { IResources } from "../utils/IResources";
 
 export class MaiSceneHud {
@@ -19,6 +20,7 @@ export class MaiSceneHud {
         "crops",
         "wood",
     ];
+    private jobs: Array<keyof IJobCounts> = ["farmer", "miller", "woodcutter"];
 
     constructor(
         private scene: Scene & { placedBuilding: EntityClass },
@@ -30,6 +32,36 @@ export class MaiSceneHud {
     private addGui() {
         this.addResources();
         this.addSelectBuildings();
+    }
+
+    // TODO
+    private addJobAssignments() {
+        const board = new Board(
+            this.scene,
+            this.scene.scale.width / 2,
+            50,
+            true
+        );
+        const xPostItOffset = 60;
+        const boardTopLeft = atTopLeft(board);
+        this.jobs.forEach(
+            (type, i) =>
+                new PostItWithImage(
+                    this.scene,
+
+                    {
+                        x: boardTopLeft.x + xPostItOffset * i + 20,
+                        y: boardTopLeft.y + 12,
+                    },
+                    {
+                        component: {
+                            texture: type,
+                            scale: 1.8,
+                        },
+                        onPointerup: () => undefined,
+                    }
+                )
+        );
     }
 
     private addResources() {

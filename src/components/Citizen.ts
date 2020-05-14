@@ -1,12 +1,14 @@
 import { Physics, Scene } from "phaser";
 import { House } from "../utils/Entity";
 import { IPoint } from "../utils/IPoint";
+import { IFoodStore } from "../utils/IResources";
 import { Sprite } from "../utils/Sprite";
 import { Hobo } from "./jobs/Hobo";
 import { IJob } from "./jobs/IJob";
 
 const MIN_DISTANCE_TO_TARGET = 5;
-const SPEED = 200; // px per frame
+const SPEED = 200;
+const FOOD_PER_TICK = 100;
 
 export class Citizen extends Physics.Arcade.Sprite {
     public idle = true;
@@ -14,7 +16,7 @@ export class Citizen extends Physics.Arcade.Sprite {
     public home?: House;
     public job: IJob = new Hobo();
 
-    constructor(scene: Scene, x: number, y: number) {
+    constructor(scene: Scene, x: number, y: number, private store: IFoodStore) {
         super(scene, x, y, "citizen");
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -80,5 +82,18 @@ export class Citizen extends Physics.Arcade.Sprite {
 
     public dist(other: IPoint) {
         return Phaser.Math.Distance.Between(this.x, this.y, other.x, other.y);
+    }
+
+    public hasFood() {
+        return this.store.hasResources({ food: FOOD_PER_TICK });
+    }
+
+    public eat() {
+        this.store.pay({ food: FOOD_PER_TICK });
+    }
+
+    public die() {
+        this.job.stop();
+        this.destroy();
     }
 }

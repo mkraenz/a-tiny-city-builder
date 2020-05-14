@@ -8,3 +8,8 @@ export interface IResources {
 export interface IStore {
     addResources: (res: Partial<IResources>) => void;
 }
+
+export interface IFoodStore {
+    hasResources(res: Partial<IResources>): boolean;
+    pay(res: Partial<IResources>): void;
+}

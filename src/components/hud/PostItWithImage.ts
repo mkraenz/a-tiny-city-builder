@@ -1,12 +1,13 @@
-import { GameObjects, Scene } from "phaser";
+import { Scene } from "phaser";
 import { GUI_DEPTH } from "../../styles/constants";
 import { atCenter } from "../../utils/get-coords";
 import { IPoint } from "../../utils/IPoint";
+import { Sprite } from "../../utils/Sprite";
 import { PostIt } from "./PostIt";
 
 export class PostItWithImage {
     public readonly postIt: PostIt;
-    public readonly image: GameObjects.Image;
+    public readonly image: Sprite;
 
     constructor(
         scene: Scene,
@@ -22,6 +23,7 @@ export class PostItWithImage {
     ) {
         this.postIt = new PostIt(scene, at, cfg);
         const center = atCenter(this.postIt);
+
         this.image = scene.add
             .image(center.x, center.y, cfg.component.texture)
             .setDepth(GUI_DEPTH);

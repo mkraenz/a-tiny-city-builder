@@ -91,12 +91,15 @@ export class LoadingScene extends Scene {
         this.load.image("postit", "./assets/images/postit.png");
         this.load.image("peach-bg", "./assets/images/peach-bg.png");
         this.load.image("field", "./assets/images/field.png");
-        this.load.image("windmill", "./assets/images/windmill.png");
         this.load.image("wood", "./assets/images/wood.png");
         this.load.image("stone", "./assets/images/stone.png");
         this.load.image("food", "./assets/images/food.png");
         this.load.image("crops", "./assets/images/crops.png");
         this.load.image("citizen", "./assets/images/citizen.png");
+        this.load.spritesheet("windmill", "./assets/images/windmill.png", {
+            frameWidth: 24,
+            frameHeight: 32,
+        });
         this.load.spritesheet("tree", "./assets/images/tree-5-pics.png", {
             frameWidth: 16,
         });

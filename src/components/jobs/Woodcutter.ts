@@ -4,17 +4,24 @@ import { Tree } from "../Tree";
 import { Hobo } from "./Hobo";
 import { IJob } from "./IJob";
 
-const WOOD_PER_TREE = 1;
+const WOOD_PER_TREE = 5;
 const TIME_TO_CUT_TREE_IN_MS = 3000;
 
 export class Woodcutter implements IJob {
     private tickStarted = false;
+    private timer?: NodeJS.Timeout;
 
     constructor(
         private citizen: Citizen,
         private store: IStore,
         private getTrees: () => Tree[]
     ) {}
+
+    public stop(): void {
+        if (this.timer) {
+            clearTimeout(this.timer);
+        }
+    }
 
     public update() {
         if (this.citizen.idle) {
@@ -57,7 +64,10 @@ export class Woodcutter implements IJob {
     private startCuttingTree() {
         this.citizen.setIdle(false);
         this.tickStarted = true;
-        setTimeout(() => this.handleTreeCut(), TIME_TO_CUT_TREE_IN_MS);
+        this.timer = setTimeout(
+            () => this.handleTreeCut(),
+            TIME_TO_CUT_TREE_IN_MS
+        );
     }
 
     private handleTreeCut() {

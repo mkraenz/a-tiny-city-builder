@@ -1,6 +1,7 @@
 import { Physics, Scene } from "phaser";
 import { IBuildCosts } from "../../utils/IBuildCosts";
 import { IPoint } from "../../utils/IPoint";
+import { IFoodStore } from "../../utils/IResources";
 import { Citizen } from "../Citizen";
 import { CitizenSpawner } from "../CitizenSpawner";
 
@@ -18,13 +19,14 @@ export class House2 extends Physics.Arcade.Image {
 
     constructor(
         scene: Scene & { addCits: (cits: Citizen[]) => void },
-        at: IPoint
+        at: IPoint,
+        store: IFoodStore
     ) {
         super(scene, at.x, at.y, House2.texture);
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        const spawner = new CitizenSpawner(scene, at);
+        const spawner = new CitizenSpawner(scene, at, store);
         const spawnedCits = spawner.spawn(SPAWNED_CITIZEN);
         scene.addCits(spawnedCits);
     }

@@ -4,16 +4,24 @@ import { Windmill } from "../entities/Windmill";
 import { IJob } from "./IJob";
 
 const FOOD_PER_TICK = 1;
-const TICK_TIME_IN_MS = 5000;
+const TICK_TIME_IN_MS = 1000;
 
 export class Miller implements IJob {
     private tickStarted = false;
+    private timer?: NodeJS.Timeout;
 
     constructor(
         private citizen: Citizen,
         private store: IStore,
         private windmill: () => Windmill
     ) {}
+
+    public stop(): void {
+        if (this.timer) {
+            clearTimeout(this.timer);
+        }
+        this.windmill().unOccupy();
+    }
 
     public update() {
         if (this.citizen.idle) {
@@ -45,7 +53,7 @@ export class Miller implements IJob {
     private startMilling() {
         this.citizen.setIdle(false);
         this.tickStarted = true;
-        setTimeout(() => this.onTickFinished(), TICK_TIME_IN_MS);
+        this.timer = setTimeout(() => this.onTickFinished(), TICK_TIME_IN_MS);
     }
 
     private onTickFinished() {

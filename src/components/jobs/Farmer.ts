@@ -8,12 +8,20 @@ const TIME_TO_FARM = 5000;
 
 export class Farmer implements IJob {
     private tickStarted = false;
+    private timer?: NodeJS.Timeout;
 
     constructor(
         private citizen: Citizen,
         private store: IStore,
         private field: () => Field
     ) {}
+
+    public stop(): void {
+        if (this.timer) {
+            clearTimeout(this.timer);
+        }
+        this.field().isTaken = false;
+    }
 
     public update() {
         if (this.citizen.idle) {
@@ -45,7 +53,7 @@ export class Farmer implements IJob {
     private startFarming() {
         this.citizen.setIdle(false);
         this.tickStarted = true;
-        setTimeout(() => this.onTickFinished(), TIME_TO_FARM);
+        this.timer = setTimeout(() => this.onTickFinished(), TIME_TO_FARM);
     }
 
     private onTickFinished() {

@@ -1,16 +1,14 @@
-import { IResources, IStore } from "../utils/IResources";
+import { IFoodStore, IResources, IStore } from "../utils/IResources";
 import { keysIn } from "../utils/ts";
 
-export class Player implements IStore {
+export class Player implements IStore, IFoodStore {
     public food = 12;
     public stone = 90;
-    public wood = 20;
+    public wood = 60;
     public crops = 20;
 
     public hasResources(res: Partial<IResources>) {
-        const has = (key: keyof typeof res) =>
-            res[key] ? res[key]! <= this[key] : true;
-        return has("food") && has("crops") && has("stone") && has("wood");
+        return keysIn(res).every(key => res[key]! <= this[key]);
     }
 
     public addResources(res: Partial<IResources>) {

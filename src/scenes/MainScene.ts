@@ -8,6 +8,7 @@ import { Windmill } from "../components/entities/Windmill";
 import { Player } from "../components/Player";
 import { Tree } from "../components/Tree";
 import { TreeSpawner } from "../components/TreeSpawner";
+import { CitizenManager } from "../logic/CitizenManager";
 import { HomeFinder } from "../logic/HomeFinder";
 import { JobFinder } from "../logic/JobFinder";
 import { Entity, EntityClass, House } from "../utils/Entity";
@@ -28,6 +29,7 @@ export class MainScene extends Scene {
     private trees: Tree[] = [];
     private homeFinder!: HomeFinder;
     private jobFinder!: JobFinder;
+    private citizenManager!: CitizenManager;
 
     constructor() {
         super({ key: "MainScene" });
@@ -43,10 +45,6 @@ export class MainScene extends Scene {
         const forest = new TreeSpawner(this, this.trees);
         forest.spawn(5);
         forest.spawnRegularly(NEW_TREES_PER_SEC);
-
-        this.cits = Array(START_CITIZEN_COUNT)
-            .fill(0)
-            .map(_ => new Citizen(this, 10, 10));
         const getCits = () => this.cits;
         this.homeFinder = new HomeFinder(
             () => this.buildings.filter(isHouse),
@@ -59,11 +57,17 @@ export class MainScene extends Scene {
             () => this.buildings.filter(isField),
             () => this.buildings.filter(isWindmill)
         );
+        this.citizenManager = new CitizenManager(this, getCits);
     }
 
-    public update() {
+    public setCitizen(cits: Citizen[]) {
+        this.cits = cits;
+    }
+
+    public update(time: number, delta: number) {
         this.homeFinder.assignFreeHomes();
         this.jobFinder.assignJobsToUnemployed();
+        this.citizenManager.update(delta);
     }
 
     public addCits(newCits: Citizen[]) {
@@ -73,7 +77,7 @@ export class MainScene extends Scene {
     private placeBuilding({ x, y }: Input.Pointer) {
         const Building = this.placedBuilding;
         if (this.canBuildAt(x, y, Building) && this.canPayFor(Building)) {
-            const house = new Building(this, { x, y });
+            const house = new Building(this, { x, y }, this.player);
             this.buildings.push(house);
             this.player.pay(Building.buildCosts);
         }

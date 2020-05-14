@@ -6,19 +6,15 @@ import { Hobo } from "../components/jobs/Hobo";
 import { Miller } from "../components/jobs/Miller";
 import { Woodcutter } from "../components/jobs/Woodcutter";
 import { Tree } from "../components/Tree";
+import { IJobCounts } from "../utils/IJobCounts";
 import { IStore } from "../utils/IResources";
-
-interface IJobCounts {
-    woodcutter: number;
-    farmer: number;
-    miller: number;
-}
+import { keysIn } from "../utils/ts";
 
 export class JobFinder {
     private targetJobCount: IJobCounts = {
         woodcutter: 2,
-        farmer: 5,
-        miller: 2,
+        farmer: 20,
+        miller: 20,
     };
 
     constructor(
@@ -29,9 +25,14 @@ export class JobFinder {
         private windmills: () => Windmill[]
     ) {}
 
+    public setTargetJobCount(job: Partial<IJobCounts>) {
+        keysIn(job).forEach(key => (this.targetJobCount[key] += job[key]!));
+    }
+
     public assignJobsToUnemployed() {
         const unemployed = this.getUnemployedCitizen();
         unemployed.forEach(cit => {
+            // order is important. it determines the priority by which we fill jobs
             if (
                 this.currentJobCount.farmer < this.targetJobCount.farmer &&
                 hasFree(this.fields())
@@ -69,7 +70,7 @@ export class JobFinder {
         if (freeBuilding) {
             const job = new Miller(cit, this.store, () => freeBuilding);
             cit.setJob(job);
-            freeBuilding.isTaken = true;
+            freeBuilding.occupy();
         }
     }
 
