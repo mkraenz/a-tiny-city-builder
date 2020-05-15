@@ -41,6 +41,8 @@ export class Citizen extends Physics.Arcade.Sprite {
     }
 
     public setJob(job: IJob) {
+        this.job.stop();
+        this.target = undefined;
         this.job = job;
     }
 

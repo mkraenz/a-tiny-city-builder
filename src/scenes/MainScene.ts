@@ -72,6 +72,7 @@ export class MainScene extends Scene {
     public update(time: number, delta: number) {
         this.homeFinder.assignFreeHomes();
         this.jobManager.assignJobsToUnemployed();
+        this.jobManager.adjustEmployeesToTargetCount();
         this.citizenManager.update(delta);
     }
 

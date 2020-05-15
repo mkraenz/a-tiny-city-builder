@@ -55,7 +55,11 @@ export class JobFinder {
     }
 
     public get unemployedCitizen() {
-        return this.cits().filter(c => c.job instanceof Hobo);
+        return this.cits().filter(cit => Hobo.instanceOf(cit.job));
+    }
+
+    public get employedCitizen() {
+        return this.cits().filter(cit => !Hobo.instanceOf(cit.job));
     }
 
     public assignJobsToUnemployed() {
@@ -82,6 +86,18 @@ export class JobFinder {
                 return;
             }
         });
+    }
+
+    public adjustEmployeesToTargetCount() {
+        while (this.woodcutters.length > this.targetJobCount.woodcutter) {
+            this.woodcutters[0].setJob(new Hobo());
+        }
+        while (this.farmers.length > this.targetJobCount.farmer) {
+            this.farmers[0].setJob(new Hobo());
+        }
+        while (this.millers.length > this.targetJobCount.miller) {
+            this.millers[0].setJob(new Hobo());
+        }
     }
 
     private makeFarmer(cit: Citizen) {
