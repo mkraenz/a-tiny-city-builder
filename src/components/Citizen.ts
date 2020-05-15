@@ -7,8 +7,8 @@ import { Hobo } from "./jobs/Hobo";
 import { IJob } from "./jobs/IJob";
 
 const MIN_DISTANCE_TO_TARGET = 5;
-const SPEED = 200;
-const FOOD_PER_TICK = 0;
+const SPEED = 50;
+const FOOD_PER_TICK = 2;
 
 export class Citizen extends Physics.Arcade.Sprite {
     public idle = true;

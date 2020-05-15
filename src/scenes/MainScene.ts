@@ -41,7 +41,7 @@ export class MainScene extends Scene {
             this.placeBuilding(pointer)
         );
         this.player = new Player();
-        const forest = new TreeSpawner(this, this.trees);
+        const forest = new TreeSpawner(this, () => this.trees);
         forest.spawn(5);
         forest.spawnRegularly(NEW_TREES_PER_SEC);
         const getCits = () => this.cits;
@@ -70,6 +70,7 @@ export class MainScene extends Scene {
     }
 
     public update(time: number, delta: number) {
+        this.trees = this.trees.filter(t => t.active);
         this.homeFinder.assignFreeHomes();
         this.jobManager.assignJobsToUnemployed();
         this.jobManager.adjustEmployeesToTargetCount();
