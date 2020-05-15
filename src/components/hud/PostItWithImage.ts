@@ -17,7 +17,7 @@ export class PostItWithImage {
                 texture: string;
                 scale?: number;
             };
-            onPointerup: () => void;
+            onPointerup?: () => void;
             scale?: number;
         }
     ) {

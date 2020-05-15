@@ -10,6 +10,10 @@ export class CitizenManager {
         private cits: () => Citizen[]
     ) {}
 
+    public get citizenCount() {
+        return this.cits().length;
+    }
+
     public update(delta: number) {
         this.tickTimer += delta;
         if (this.tickTimer > TICK_TIME_IN_MS) {

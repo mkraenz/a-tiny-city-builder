@@ -99,6 +99,9 @@ See [.travis.yml](.travis.yml).
 - [Aspire](https://www.aseprite.org/)
 - [Aspire - How to](https://www.youtube.com/watch?v=Md6W79jtLJM)
 - [Awesome Github Actions](https://github.com/sdras/awesome-actions)
+- [Inofficial Phaser Plugins](https://phaserplugins.com/)
+- [Phaser3 Nineslice Plugin](https://github.com/jdotrjs/phaser3-nineslice)
+- [Phaser3 Debug Plugin](https://github.com/samme/phaser-plugin-debug-draw)
 
 ### Generating favicon.ico
 

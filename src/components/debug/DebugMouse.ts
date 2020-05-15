@@ -1,5 +1,5 @@
 import { GameObjects, Scene } from "phaser";
-import { TextConfig } from "../styles/Text";
+import { TextConfig } from "../../styles/Text";
 
 /**
  * Prints the mouse coordinates on the canvas

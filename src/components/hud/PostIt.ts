@@ -7,7 +7,7 @@ export class PostIt extends GameObjects.Image {
         scene: Scene,
         { x, y }: IPoint,
         cfg: {
-            onPointerup: () => void;
+            onPointerup?: () => void;
             scale?: number;
         }
     ) {
@@ -16,7 +16,9 @@ export class PostIt extends GameObjects.Image {
         this.setScale(cfg.scale || 1.5);
         this.setOrigin(0);
         this.setDepth(GUI_DEPTH);
-        this.setInteractive();
-        this.on("pointerup", cfg.onPointerup);
+        if (cfg.onPointerup) {
+            this.setInteractive({ useHandCursor: true });
+            this.on("pointerup", cfg.onPointerup);
+        }
     }
 }

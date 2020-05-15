@@ -28,7 +28,7 @@ export class MainScene extends Scene {
     private cits: Citizen[] = [];
     private trees: Tree[] = [];
     private homeFinder!: HomeFinder;
-    private jobFinder!: JobFinder;
+    private jobManager!: JobFinder;
     private citizenManager!: CitizenManager;
 
     constructor() {
@@ -41,7 +41,6 @@ export class MainScene extends Scene {
             this.placeBuilding(pointer)
         );
         this.player = new Player();
-        new MaiSceneHud(this, this.player);
         const forest = new TreeSpawner(this, this.trees);
         forest.spawn(5);
         forest.spawnRegularly(NEW_TREES_PER_SEC);
@@ -50,7 +49,7 @@ export class MainScene extends Scene {
             () => this.buildings.filter(isHouse),
             getCits
         );
-        this.jobFinder = new JobFinder(
+        this.jobManager = new JobFinder(
             this.player,
             getCits,
             () => this.trees,
@@ -58,6 +57,12 @@ export class MainScene extends Scene {
             () => this.buildings.filter(isWindmill)
         );
         this.citizenManager = new CitizenManager(this, getCits);
+        new MaiSceneHud(
+            this,
+            this.player,
+            this.jobManager,
+            this.citizenManager
+        );
     }
 
     public setCitizen(cits: Citizen[]) {
@@ -66,7 +71,7 @@ export class MainScene extends Scene {
 
     public update(time: number, delta: number) {
         this.homeFinder.assignFreeHomes();
-        this.jobFinder.assignJobsToUnemployed();
+        this.jobManager.assignJobsToUnemployed();
         this.citizenManager.update(delta);
     }
 

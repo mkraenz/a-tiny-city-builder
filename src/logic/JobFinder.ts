@@ -13,8 +13,8 @@ import { keysIn } from "../utils/ts";
 export class JobFinder {
     private targetJobCount: IJobCounts = {
         woodcutter: 2,
-        farmer: 20,
-        miller: 20,
+        farmer: 2,
+        miller: 2,
     };
 
     constructor(
@@ -25,13 +25,41 @@ export class JobFinder {
         private windmills: () => Windmill[]
     ) {}
 
+    public get totalTargetJobCount() {
+        return Object.values(this.targetJobCount).reduce(
+            (sum, val) => (sum += val),
+            0
+        ) as number;
+    }
+
     public setTargetJobCount(job: Partial<IJobCounts>) {
         keysIn(job).forEach(key => (this.targetJobCount[key] += job[key]!));
     }
 
+    public getTargetJobCount(job: keyof IJobCounts) {
+        return this.targetJobCount[job];
+    }
+
+    public getCurrentJobCount(job: keyof IJobCounts) {
+        return this.currentJobCount[job];
+    }
+
+    public increaseTargetJobCount(job: keyof IJobCounts) {
+        this.targetJobCount[job]++;
+    }
+
+    public decreaseTargetJobCount(job: keyof IJobCounts) {
+        if (this.targetJobCount[job] > 0) {
+            this.targetJobCount[job]--;
+        }
+    }
+
+    public get unemployedCitizen() {
+        return this.cits().filter(c => c.job instanceof Hobo);
+    }
+
     public assignJobsToUnemployed() {
-        const unemployed = this.getUnemployedCitizen();
-        unemployed.forEach(cit => {
+        this.unemployedCitizen.forEach(cit => {
             // order is important. it determines the priority by which we fill jobs
             if (
                 this.currentJobCount.farmer < this.targetJobCount.farmer &&
@@ -77,10 +105,6 @@ export class JobFinder {
     private makeWoodcutter(cit: Citizen) {
         const job = new Woodcutter(cit, this.store, this.trees);
         cit.setJob(job);
-    }
-
-    private getUnemployedCitizen() {
-        return this.cits().filter(c => c.job instanceof Hobo);
     }
 
     public get currentJobCount(): IJobCounts {

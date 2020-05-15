@@ -107,6 +107,16 @@ export class LoadingScene extends Scene {
             "postit-two-pins",
             "./assets/images/postit-two-pins.png"
         );
+        this.load.spritesheet(
+            "plus-button",
+            "./assets/images/plus-button.png",
+            { frameWidth: 16, frameHeight: 16 }
+        );
+        this.load.spritesheet(
+            "minus-button",
+            "./assets/images/minus-button.png",
+            { frameWidth: 16, frameHeight: 16 }
+        );
         // this.load.audio("background", "./assets/sounds/bgm.mp3");
     }
 
