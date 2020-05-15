@@ -13,13 +13,16 @@ export class PlusMinusButton extends GameObjects.Sprite {
     private get holdAnimKey() {
         return `${this.texture.key}-hold`;
     }
+    private isClicked = false;
+    private timeSincePointerdown = 0;
+    private timeSinceLastCallback = 0;
 
     constructor(
         scene: Scene,
         x: number,
         y: number,
         texture: "plus" | "minus",
-        onPointerup: () => void,
+        private onPointerup: () => void,
         private disabledCondition?: () => boolean
     ) {
         super(scene, x, y, `${texture}-button`);
@@ -33,18 +36,50 @@ export class PlusMinusButton extends GameObjects.Sprite {
             .on("pointerover", this.enterHoverState)
             .on("pointerout", this.enterBaseState)
             .on("pointerdown", this.enterHoldState)
-            .on("pointerup", this.enterHoverState)
-            .on("pointerup", onPointerup);
+            .on("pointerup", this.enterHoverState);
+        this.setInputHandlersForHolding();
     }
 
-    public preUpdate() {
+    public preUpdate(time: number, deltaTime: number) {
         if (this.disabledCondition && this.disabledCondition()) {
             this.disableInteractive();
             this.setAlpha(0.5);
+            this.resetClicked();
         } else {
             this.setInteractive();
             this.setAlpha(1);
+
+            this.updateHold(deltaTime);
         }
+    }
+
+    private updateHold(deltaTime: number) {
+        if (this.isClicked) {
+            this.timeSincePointerdown += deltaTime;
+            this.timeSinceLastCallback += deltaTime;
+            if (
+                this.timeSincePointerdown > 600 &&
+                this.timeSinceLastCallback > 100
+            ) {
+                this.onPointerup();
+                this.timeSinceLastCallback = 0;
+            }
+        }
+    }
+
+    private setInputHandlersForHolding() {
+        const resetClicked = () => this.resetClicked();
+        this.on("pointerdown", () => {
+            this.isClicked = true;
+            this.onPointerup();
+        });
+        this.on("pointerup", resetClicked);
+        this.on("pointerout", resetClicked);
+    }
+
+    private resetClicked() {
+        this.isClicked = false;
+        this.timeSincePointerdown = 0;
     }
 
     private enterHoldState() {
