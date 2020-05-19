@@ -1,4 +1,4 @@
-import { Input, Physics, Scene } from "phaser";
+import { Cameras, Input, Physics, Scene } from "phaser";
 import { BackgroundImage } from "../components/BackgroundImage";
 import { Citizen } from "../components/Citizen";
 import { Field } from "../components/entities/Field";
@@ -14,11 +14,15 @@ import { JobFinder } from "../logic/JobFinder";
 import { Entity, EntityClass, House } from "../utils/Entity";
 import { IBuildCosts } from "../utils/IBuildCosts";
 import { IPoint } from "../utils/IPoint";
-import { MaiSceneHud } from "./MainSceneHud";
+import { BuildingSelectionHud } from "./hud/BuildingSelectionHud";
+import { JobsHud } from "./hud/JobsHud";
+import { ResourceBarHud } from "./hud/ResourceBarHud";
+import { ToggleHudsHud } from "./hud/ToggleHudsHud";
 
 const START_CITIZEN_COUNT = 1;
-const START_TREE_COUNT = 800;
+const START_TREE_COUNT = 50;
 const NEW_TREES_PER_SEC = 2;
+const FADE_IN_TIME = 0;
 
 export class MainScene extends Scene {
     public buildingTypes: EntityClass[] = [House1, House2, Field, Windmill];
@@ -30,6 +34,7 @@ export class MainScene extends Scene {
     private homeFinder!: HomeFinder;
     private jobManager!: JobFinder;
     private citizenManager!: CitizenManager;
+    private controls!: Cameras.Controls.SmoothedKeyControl;
 
     constructor() {
         super({ key: "MainScene" });
@@ -37,6 +42,26 @@ export class MainScene extends Scene {
 
     public create(): void {
         const bg = new BackgroundImage(this, "peach-bg");
+
+        const world = this.add.image(0, 0, "world").setOrigin(0);
+        this.cameras.main.setZoom(3);
+        this.cameras.main.setBounds(0, 0, world.width, world.height);
+        const cursors = this.input.keyboard.createCursorKeys();
+
+        const controlConfig = {
+            camera: this.cameras.main,
+            left: cursors.left,
+            right: cursors.right,
+            up: cursors.up,
+            down: cursors.down,
+            acceleration: 1,
+            maxSpeed: 0.4,
+            drag: 1,
+        };
+        this.controls = new Phaser.Cameras.Controls.SmoothedKeyControl(
+            controlConfig
+        );
+
         bg.on("pointerup", (pointer: Input.Pointer) =>
             this.placeBuilding(pointer)
         );
@@ -57,12 +82,8 @@ export class MainScene extends Scene {
             () => this.buildings.filter(isWindmill)
         );
         this.citizenManager = new CitizenManager(this, getCits);
-        new MaiSceneHud(
-            this,
-            this.player,
-            this.jobManager,
-            this.citizenManager
-        );
+        this.cameras.main.fadeIn(FADE_IN_TIME);
+        this.cameras.main.once("camerafadeincomplete", () => this.addHud());
     }
 
     public setCitizen(cits: Citizen[]) {
@@ -75,13 +96,29 @@ export class MainScene extends Scene {
         this.jobManager.assignJobsToUnemployed();
         this.jobManager.adjustEmployeesToTargetCount();
         this.citizenManager.update(delta);
+        this.controls.update(delta);
     }
 
     public addCits(newCits: Citizen[]) {
         this.cits.push(...newCits);
     }
 
-    private placeBuilding({ x, y }: Input.Pointer) {
+    private addHud() {
+        this.scene.add("ResourceBarHud", ResourceBarHud, true, {
+            resources: this.player,
+        });
+        this.scene.add("JobsHud", JobsHud, true, {
+            jobManager: this.jobManager,
+            citizenManager: this.citizenManager,
+        });
+        this.scene.add("BuildingSelectionHud", BuildingSelectionHud, true, {
+            gameScene: this,
+        });
+        this.scene.add("ToggleHudsHud", ToggleHudsHud, true);
+    }
+
+    private placeBuilding(pointer: IPoint) {
+        const { x, y } = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
         const Building = this.placedBuilding;
         if (this.canBuildAt(x, y, Building) && this.canPayFor(Building)) {
             const house = new Building(this, { x, y }, this.player);
@@ -100,6 +137,8 @@ export class MainScene extends Scene {
         y: number,
         building: { width: number; height: number }
     ) {
+        // TODO rewrite with RectangleToRectangle
+        // https://photonstorm.github.io/phaser3-docs/Phaser.Geom.Intersects.html#.RectangleToRectangle__anchor
         const halfWidth = building.width / 2;
         const halfHeight = building.height / 2;
         const topLeft = { x: x - halfWidth, y: y - halfHeight };

@@ -16,5 +16,6 @@ export class House1 extends Physics.Arcade.Image {
         super(scene, at.x, at.y, House1.texture);
         scene.add.existing(this);
         scene.physics.add.existing(this);
+        this.setInteractive(); // blockinput
     }
 }

@@ -27,7 +27,7 @@ export class PlusMinusButton extends GameObjects.Sprite {
     ) {
         super(scene, x, y, `${texture}-button`);
         scene.add.existing(this);
-        this.setDepth(GUI_DEPTH + 1);
+        this.setDepth(GUI_DEPTH + 1).setScrollFactor(0);
         this.setOrigin(0);
         this.configureAnims();
         this.enterBaseState();

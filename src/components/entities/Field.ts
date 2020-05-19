@@ -2,6 +2,8 @@ import { Physics, Scene } from "phaser";
 import { IBuildCosts } from "../../utils/IBuildCosts";
 import { IPoint } from "../../utils/IPoint";
 
+// https://opengameart.org/content/farming-crops-16x16
+
 export class Field extends Physics.Arcade.Image {
     public static width = 32;
     public static height = 32;
@@ -16,5 +18,6 @@ export class Field extends Physics.Arcade.Image {
         super(scene, at.x, at.y, Field.texture);
         scene.add.existing(this);
         scene.physics.add.existing(this);
+        this.setInteractive(); // block input
     }
 }

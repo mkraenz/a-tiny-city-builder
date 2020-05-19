@@ -15,7 +15,7 @@ export class PostIt extends GameObjects.Image {
         scene.add.existing(this);
         this.setScale(cfg.scale || 1.5);
         this.setOrigin(0);
-        this.setDepth(GUI_DEPTH);
+        this.setDepth(GUI_DEPTH).setScrollFactor(0);
         if (cfg.onPointerup) {
             this.setInteractive({ useHandCursor: true });
             this.on("pointerup", cfg.onPointerup);

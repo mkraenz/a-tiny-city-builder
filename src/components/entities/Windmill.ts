@@ -19,6 +19,7 @@ export class Windmill extends Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.configureAnims();
+        this.setInteractive(); // blockinput
     }
 
     public occupy() {

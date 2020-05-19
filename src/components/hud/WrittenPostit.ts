@@ -14,7 +14,7 @@ export class WrittenPostit extends GameObjects.Image {
         super(scene, x, y, "postit-two-pins");
         scene.add.existing(this);
         this.setInteractive(); // block input
-        this.setDepth(GUI_DEPTH);
+        this.setDepth(GUI_DEPTH).setScrollFactor(0);
         this.text = this.scene.add
             .text(x - 10, y - 5, "", { color: Color.Black })
             .setDepth(this.depth + 1);

@@ -3,6 +3,8 @@ import { Color, toHex } from "../styles/Color";
 import { setDefaultTextStyle } from "../styles/Text";
 import { MainScene } from "./MainScene";
 
+const FADEOUT_TIME = 0;
+
 export class LoadingScene extends Scene {
     private halfWidth!: number;
     private halfHeight!: number;
@@ -56,8 +58,11 @@ export class LoadingScene extends Scene {
         this.load.on("progress", this.getProgressBarFiller(progressBar));
         this.load.on("fileprogress", this.getAssetTextWriter(assetText));
         this.load.on("complete", () => {
-            this.scene.add("MainScene", MainScene, true);
-            this.scene.remove("LoadingScene");
+            this.cameras.main.once("camerafadeoutcomplete", (camera: any) => {
+                this.scene.add("MainScene", MainScene, true);
+                this.scene.remove("LoadingScene");
+            });
+            this.cameras.main.fadeOut(FADEOUT_TIME);
         });
     }
 
@@ -116,6 +121,10 @@ export class LoadingScene extends Scene {
             "minus-button",
             "./assets/images/minus-button.png",
             { frameWidth: 16, frameHeight: 16 }
+        );
+        this.load.image(
+            "world",
+            "./assets/images/earthbound-scarab-do-not-upload.png"
         );
         // this.load.audio("background", "./assets/sounds/bgm.mp3");
     }

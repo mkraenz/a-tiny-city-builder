@@ -29,5 +29,6 @@ export class House2 extends Physics.Arcade.Image {
         const spawner = new CitizenSpawner(scene, at, store);
         const spawnedCits = spawner.spawn(SPAWNED_CITIZEN);
         scene.addCits(spawnedCits);
+        this.setInteractive(); // blockinput
     }
 }

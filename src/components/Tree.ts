@@ -16,6 +16,7 @@ export class Tree extends Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         this.setScale(2);
         this.animate();
+        this.setInteractive(); // block input
     }
 
     public animate() {

@@ -21,12 +21,14 @@
     },
     "devDependencies": {
         "@types/chai": "^4.2.11",
+        "@types/dat.gui": "^0.7.5",
         "@types/file-saver": "^2.0.1",
         "@types/graphlib": "^2.1.5",
         "@types/lodash": "^4.14.150",
         "@types/mocha": "^7.0.2",
         "@types/sinon": "^9.0.0",
         "@types/sinon-chai": "^3.2.4",
+        "@types/uuid": "^7.0.3",
         "chai": "^4.2.0",
         "commit-message-validator": "^0.1.11",
         "del-cli": "^3.0.0",
@@ -52,11 +54,13 @@
         "webpack-dev-server": "3.11.0"
     },
     "dependencies": {
+        "dat.gui": "^0.7.7",
         "file-saver": "^2.0.2",
         "graphlib": "^2.1.8",
         "lodash": "^4.17.15",
         "phaser": "~3.23.0",
-        "phaser3-rex-plugins": "^1.1.14"
+        "phaser3-rex-plugins": "^1.1.14",
+        "uuid": "^8.0.0"
     },
     "husky": {
         "hooks": {

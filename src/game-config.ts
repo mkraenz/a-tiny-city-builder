@@ -20,4 +20,7 @@ export const gameConfig: Types.Core.GameConfig = {
             debug: true,
         },
     },
+    render: {
+        pixelArt: true,
+    },
 };

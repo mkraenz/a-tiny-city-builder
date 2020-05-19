@@ -26,7 +26,8 @@ export class PostItWithImage {
 
         this.image = scene.add
             .image(center.x, center.y, cfg.component.texture)
-            .setDepth(GUI_DEPTH);
+            .setDepth(GUI_DEPTH)
+            .setScrollFactor(0);
         if (cfg.component.scale) {
             this.image.setScale(cfg.component.scale);
         }

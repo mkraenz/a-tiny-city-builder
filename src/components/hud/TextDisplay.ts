@@ -15,7 +15,7 @@ export class TextDisplay extends GameObjects.Text {
     ) {
         super(scene, x, y, "", Cfg.styles);
         scene.add.existing(this);
-        this.setDepth(GUI_DEPTH + 1);
+        this.setDepth(GUI_DEPTH + 1).setScrollFactor(0);
         if (alignRight) {
             this.setOrigin(1, 0);
         }

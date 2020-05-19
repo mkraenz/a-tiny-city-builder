@@ -11,6 +11,6 @@ export class Board extends GameObjects.Image {
             this.setOrigin(0);
         }
         this.setInteractive(); // block input
-        this.setDepth(GUI_DEPTH);
+        this.setDepth(GUI_DEPTH).setScrollFactor(0);
     }
 }
