@@ -1,4 +1,4 @@
-import { Cameras, Input, Physics, Scene } from "phaser";
+import { Cameras, Geom, Input, Physics, Scene } from "phaser";
 import { Citizen } from "../components/Citizen";
 import { Field } from "../components/entities/Field";
 import { House1 } from "../components/entities/House1";
@@ -158,22 +158,23 @@ export class MainScene extends Scene {
         y: number,
         building: { width: number; height: number }
     ) {
-        // TODO rewrite with RectangleToRectangle
-        // https://photonstorm.github.io/phaser3-docs/Phaser.Geom.Intersects.html#.RectangleToRectangle__anchor
-        const halfWidth = building.width / 2;
-        const halfHeight = building.height / 2;
-        const topLeft = { x: x - halfWidth, y: y - halfHeight };
-        const topRight = { x: x + halfWidth, y: y - halfHeight };
-        const bottomRight = { x: x + halfWidth, y: y + halfHeight };
-        const bottomLeft = { x: x - halfWidth, y: y + halfHeight };
-        return !this.buildings.some(({ body }) => {
-            // TODO not working for windmill and house2
-            const hit = (point: IPoint) => body.hitTest(point.x, point.y);
-            return (
-                hit(topLeft) ||
-                hit(topRight) ||
-                hit(bottomLeft) ||
-                hit(bottomRight)
+        const buildingGrounds = new Geom.Rectangle(
+            x,
+            y,
+            building.width,
+            building.height
+        );
+
+        return !this.buildings.some(other => {
+            const existingBuilding = new Geom.Rectangle(
+                other.x,
+                other.y,
+                other.width,
+                other.height
+            );
+            return Geom.Intersects.RectangleToRectangle(
+                buildingGrounds,
+                existingBuilding
             );
         });
     }

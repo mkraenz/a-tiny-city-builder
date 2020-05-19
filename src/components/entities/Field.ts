@@ -6,7 +6,7 @@ import { IPoint } from "../../utils/IPoint";
 
 export class Field extends Physics.Arcade.Image {
     public static width = 32;
-    public static height = 32;
+    public static height = 24;
     public static readonly texture = "field";
     public static buildCosts: IBuildCosts = {
         stone: 0,

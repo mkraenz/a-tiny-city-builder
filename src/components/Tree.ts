@@ -5,8 +5,8 @@ import { IPoint } from "../utils/IPoint";
 const WAVE = "wave";
 
 export class Tree extends Physics.Arcade.Sprite {
-    public static width = 24;
-    public static height = 32;
+    public static width = 16;
+    public static height = 16;
     public static readonly texture = "tree";
     public isTaken = false;
 
