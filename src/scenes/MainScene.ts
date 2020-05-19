@@ -48,23 +48,12 @@ export class MainScene extends Scene {
             this.placeBuilding(pointer)
         );
 
-        this.cameras.main.setZoom(1);
+        this.cameras.main.setZoom(2);
         this.cameras.main.setBounds(0, 0, world.width, world.height);
         const cursors = this.input.keyboard.createCursorKeys();
 
-        const controlConfig = {
-            camera: this.cameras.main,
-            left: cursors.left,
-            right: cursors.right,
-            up: cursors.up,
-            down: cursors.down,
-            acceleration: 1,
-            maxSpeed: 0.4,
-            drag: 1,
-        };
-        this.controls = new Phaser.Cameras.Controls.SmoothedKeyControl(
-            controlConfig
-        );
+        this.addCameraControls();
+
         this.player = new Player();
         const forest = new TreeSpawner(this, () => this.trees);
         forest.spawn(5);
@@ -91,6 +80,7 @@ export class MainScene extends Scene {
     }
 
     public update(time: number, delta: number) {
+        this.ensureWithinMinMaxZoom();
         this.trees = this.trees.filter(t => t.active);
         this.homeFinder.assignFreeHomes();
         this.jobManager.assignJobsToUnemployed();
@@ -101,6 +91,37 @@ export class MainScene extends Scene {
 
     public addCits(newCits: Citizen[]) {
         this.cits.push(...newCits);
+    }
+
+    private ensureWithinMinMaxZoom() {
+        if (this.cameras.main.zoom <= 1) {
+            this.cameras.main.setZoom(1);
+        }
+        if (this.cameras.main.zoom >= 3) {
+            this.cameras.main.setZoom(3);
+        }
+    }
+
+    private addCameraControls() {
+        const KeyCodes = Input.Keyboard.KeyCodes;
+        const addKey = (key: number | string) =>
+            this.input.keyboard.addKey(key);
+        const controlConfig = {
+            camera: this.cameras.main,
+            left: addKey(KeyCodes.A),
+            right: addKey(KeyCodes.D),
+            up: addKey(KeyCodes.W),
+            down: addKey(KeyCodes.S),
+            acceleration: 1,
+            maxSpeed: 0.4,
+            drag: 1,
+            zoomIn: addKey(KeyCodes.Q),
+            zoomOut: addKey(KeyCodes.E),
+            zoomSpeed: 0.01,
+        };
+        this.controls = new Phaser.Cameras.Controls.SmoothedKeyControl(
+            controlConfig
+        );
     }
 
     private addHud() {
