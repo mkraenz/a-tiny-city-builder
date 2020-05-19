@@ -1,5 +1,4 @@
 import { Cameras, Input, Physics, Scene } from "phaser";
-import { BackgroundImage } from "../components/BackgroundImage";
 import { Citizen } from "../components/Citizen";
 import { Field } from "../components/entities/Field";
 import { House1 } from "../components/entities/House1";
@@ -41,10 +40,15 @@ export class MainScene extends Scene {
     }
 
     public create(): void {
-        const bg = new BackgroundImage(this, "peach-bg");
+        const world = this.add
+            .image(0, 0, "world")
+            .setOrigin(0)
+            .setInteractive();
+        world.on("pointerup", (pointer: Input.Pointer) =>
+            this.placeBuilding(pointer)
+        );
 
-        const world = this.add.image(0, 0, "world").setOrigin(0);
-        this.cameras.main.setZoom(3);
+        this.cameras.main.setZoom(1);
         this.cameras.main.setBounds(0, 0, world.width, world.height);
         const cursors = this.input.keyboard.createCursorKeys();
 
@@ -60,10 +64,6 @@ export class MainScene extends Scene {
         };
         this.controls = new Phaser.Cameras.Controls.SmoothedKeyControl(
             controlConfig
-        );
-
-        bg.on("pointerup", (pointer: Input.Pointer) =>
-            this.placeBuilding(pointer)
         );
         this.player = new Player();
         const forest = new TreeSpawner(this, () => this.trees);
